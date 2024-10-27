@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fast Food Store</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    
+    <!-- Custom CSS -->
+    <style>
+        /* Navbar Styling */
+        .navbar {
+            background-color: #f8f9fa;
+        }
+
+        .navbar-brand, .nav-item .nav-link {
+            color: #333 !important;
+        }
+
+        .navbar-brand:hover, .nav-item .nav-link:hover {
+            color: #007bff !important;
+        }
+
+        /* Card Styling for Foods */
+        .card {
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .card-text {
+            color: #333;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        /* Main container styling */
+        .container {
+            margin-top: 20px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="{% url 'main_page' %}">Fast Food Store</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                {% if user.is_authenticated %}
+                    {% if perms.food_app.add_foodtype %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'add_food_type' %}">Add Food Type</a>
+                        </li>
+                    {% endif %}
+                    {% if perms.food_app.add_food %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'add_food' %}">Add Food</a>
+                        </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'profile' %}">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'register' %}">Register</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Foods Section -->
+    <div class="container mt-4">
+        <h1>Available Foods</h1>
+        <div class="row">
+            {% for food in foods %}
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ food.name }}</h5>
+                            <p class="card-text"><strong>Ingredients:</strong> {{ food.ingredients }}</p>
+                            <p class="card-text"><strong>Price:</strong> ${{ food.price }}</p>
+                            <p class="card-text"><strong>Views:</strong> {{ food.view_count }}</p>
+                            <p class="card-text"><strong>Likes:</strong> {{ food.like_count }}</p>
+                            
+                            <!-- Buttons -->
+                            <div class="d-flex justify-content-between">
+                                <a href="{% url 'like_food' food.id %}" class="btn btn-primary">Like</a>
+                                {% if perms.food_app.add_comment %}
+                                    <a href="{% url 'add_comment' food.id %}" class="btn btn-secondary">Comment</a>
+                                {% endif %}
+                                <a href="{% url 'food_detail' food.id %}" class="btn btn-info">Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>
